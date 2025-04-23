@@ -1,0 +1,16 @@
+/* Estilos para la página de mesas */
+.status-free {
+  background-color: #10b981; /* Verde */
+}
+
+.status-occupied {
+  background-color: #ef4444; /* Rojo */
+}
+
+.status-reserved {
+  background-color: #f59e0b; /* Amarillo */
+}
+
+.status-attended {
+  background-color: #3b82f6; /* Azul */
+}
