@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { 
@@ -6,29 +6,57 @@ import {
   FaChair, 
   FaRobot, 
   FaWarehouse, 
-  FaChartLine, 
   FaCog,
   FaSignOutAlt,
   FaUtensils,
-  FaMoneyBillWave
+  FaMoneyBillWave,
+  FaChartBar,
+  FaBell,
+  FaUsers,
+  FaClipboardList,
+  FaCalendarAlt,
+  FaFileAlt,
+  FaTags,
+  FaEllipsisH
 } from 'react-icons/fa';
 
 const SidebarIcon = ({ icon, text, active, link }) => {
   return (
     <Link href={link}>
-      <div className={`sidebar-icon group ${active ? 'bg-primary-600 text-white rounded-xl' : ''}`}>
+      <div className={`sidebar-icon group ${active ? 'bg-primary-600 text-white rounded-xl shadow-lg' : 'hover:bg-gray-700'} transition-all duration-300 ease-in-out`}>
         {icon}
-        <span className="sidebar-tooltip group-hover:scale-100">
+        <span className="sidebar-tooltip group-hover:scale-100 bg-gray-800 text-white px-3 py-1 rounded-md text-sm whitespace-nowrap">
           {text}
+          {active && <span className="block h-1 w-1/2 mx-auto mt-1 bg-primary-400 rounded-full"></span>}
         </span>
       </div>
     </Link>
   );
 };
 
-const Sidebar = () => {
+export const Sidebar = () => {
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
   const router = useRouter();
   const currentPath = router.pathname;
+
+  const mainIcons = [
+    { icon: <FaHome size="24" />, text: "Inicio", path: "/dashboard" },
+    { icon: <FaChair size="24" />, text: "Mesas", path: "/tables" },
+    { icon: <FaUtensils size="24" />, text: "Menú", path: "/menu" },
+    { icon: <FaRobot size="24" />, text: "Chatbot", path: "/chatbot" },
+    { icon: <FaWarehouse size="24" />, text: "Inventario", path: "/inventory" },
+    { icon: <FaMoneyBillWave size="24" />, text: "Económico", path: "/economic" },
+  ];
+
+  const secondaryIcons = [
+    { icon: <FaChartBar size="24" />, text: "Progreso", path: "/progress" },
+    { icon: <FaBell size="24" />, text: "Alertas", path: "/alertas" },
+    { icon: <FaUsers size="24" />, text: "Clientes", path: "/clients" },
+    { icon: <FaClipboardList size="24" />, text: "Pedidos", path: "/pedidos" },
+    { icon: <FaCalendarAlt size="24" />, text: "Reservas", path: "/reservas" },
+    { icon: <FaFileAlt size="24" />, text: "Reportes", path: "/reportes" },
+    { icon: <FaTags size="24" />, text: "Promociones", path: "/promociones" },
+  ];
 
   return (
     <div className="fixed top-0 left-0 h-screen w-16 m-0 flex flex-col bg-gray-900 text-white shadow-lg z-10">
@@ -39,62 +67,44 @@ const Sidebar = () => {
         </svg>
       </div>
 
-      <SidebarIcon 
-        icon={<FaHome size="28" />} 
-        text="Inicio" 
-        active={currentPath === '/' || currentPath === '/dashboard'}
-        link="/dashboard"
-      />
-      <SidebarIcon 
-        icon={<FaChair size="28" />} 
-        text="Mesas" 
-        active={currentPath === '/tables'}
-        link="/tables"
-      />
-      <SidebarIcon 
-        icon={<FaUtensils size="28" />} 
-        text="Menú" 
-        active={currentPath === '/menu'}
-        link="/menu"
-      />
-      <SidebarIcon 
-        icon={<FaRobot size="28" />} 
-        text="Chatbot" 
-        active={currentPath === '/chatbot'}
-        link="/chatbot"
-      />
-      <SidebarIcon 
-        icon={<FaWarehouse size="28" />} 
-        text="Inventario" 
-        active={currentPath === '/inventory'}
-        link="/inventory"
-      />
-      <SidebarIcon 
-        icon={<FaChartLine size="28" />} 
-        text="Análisis" 
-        active={currentPath === '/analytics'}
-        link="/analytics"
-      />
-      <SidebarIcon 
-        icon={<FaMoneyBillWave size="28" />} 
-        text="Económico" 
-        active={currentPath === '/economic'}
-        link="/economic"
-      />
+      {/* Iconos principales */}
+      {mainIcons.map((item, index) => (
+        <SidebarIcon 
+          key={index}
+          icon={item.icon} 
+          text={item.text} 
+          active={currentPath === item.path}
+          link={item.path}
+        />
+      ))}
 
-      <div className="mt-auto mb-4">
-        <SidebarIcon 
-          icon={<FaCog size="28" />} 
-          text="Configuración" 
-          active={currentPath === '/settings'}
-          link="/settings"
-        />
-        <SidebarIcon 
-          icon={<FaSignOutAlt size="28" />} 
-          text="Salir" 
-          active={false}
-          link="/logout"
-        />
+      {/* Menú desplegable para iconos secundarios */}
+      <div className="relative">
+        <div 
+          className="sidebar-icon group hover:bg-gray-700 transition-all duration-300 ease-in-out cursor-pointer"
+          onClick={() => setShowMoreMenu(!showMoreMenu)}
+        >
+          <FaEllipsisH size="24" />
+          <span className="sidebar-tooltip group-hover:scale-100 bg-gray-800 text-white px-3 py-1 rounded-md text-sm whitespace-nowrap">
+            Más opciones
+          </span>
+        </div>
+
+        {showMoreMenu && (
+          <div className="absolute left-16 bottom-0 w-48 bg-gray-800 rounded-md shadow-xl z-20 overflow-hidden">
+            {secondaryIcons.map((item, index) => (
+              <Link href={item.path} key={index}>
+                <div 
+                  className={`px-4 py-3 text-sm text-white hover:bg-gray-700 flex items-center ${currentPath === item.path ? 'bg-gray-700' : ''}`}
+                  onClick={() => setShowMoreMenu(false)}
+                >
+                  <span className="mr-3">{item.icon}</span>
+                  {item.text}
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

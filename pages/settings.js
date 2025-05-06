@@ -1,8 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/layout/Layout';
 import { FaPlus, FaMinus, FaSave, FaUndo, FaCog, FaChair, FaEdit, FaTrash } from 'react-icons/fa';
 
+// Animaciones CSS
+const animations = {
+  fadeIn: {
+    from: { opacity: 0 },
+    to: { opacity: 1 }
+  },
+  slideDown: {
+    from: { transform: 'translateY(-20px)', opacity: 0 },
+    to: { transform: 'translateY(0)', opacity: 1 }
+  },
+  pulse: {
+    '0%, 100%': { transform: 'scale(1)' },
+    '50%': { transform: 'scale(1.05)' }
+  }
+};
+
 const Settings = () => {
+  // Aplicar animaciones CSS
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+      @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+      .btn {
+        transition: all 0.2s ease;
+      }
+      .btn:active {
+        animation: pulse 0.2s ease;
+      }
+      .dashboard-card {
+        animation: fadeIn 0.3s ease-out;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => { document.head.removeChild(style); };
+  }, []);
   // Estado para el número de mesas
   const [tableCount, setTableCount] = useState(20);
   const [editingTableCount, setEditingTableCount] = useState(20);
@@ -86,7 +122,7 @@ const Settings = () => {
                         <p className="text-2xl font-bold">{tableCount}</p>
                       </div>
                       <button 
-                        className="btn btn-primary flex items-center"
+                        className="btn btn-primary flex items-center transition-colors duration-200 hover:bg-primary-700 active:bg-primary-800 shadow-md hover:shadow-lg transform active:scale-95"
                         onClick={() => setIsEditing(true)}
                       >
                         <FaEdit className="mr-2" /> Modificar
@@ -123,13 +159,13 @@ const Settings = () => {
                       
                       <div className="flex space-x-2">
                         <button 
-                          className="btn btn-primary flex items-center"
+                          className="btn btn-primary flex items-center transition-colors duration-200 hover:bg-primary-700 active:bg-primary-800 shadow-md hover:shadow-lg transform active:scale-95"
                           onClick={handleSaveTableCount}
                         >
                           <FaSave className="mr-2" /> Guardar
                         </button>
                         <button 
-                          className="btn btn-secondary flex items-center"
+                          className="btn btn-secondary flex items-center transition-colors duration-200 hover:bg-gray-200 active:bg-gray-300 shadow-md hover:shadow-lg transform active:scale-95"
                           onClick={() => {
                             setEditingTableCount(tableCount);
                             setIsEditing(false);
@@ -266,13 +302,13 @@ const Settings = () => {
                 
                 <div className="flex space-x-2">
                   <button 
-                    className="btn btn-primary flex items-center"
+                    className="btn btn-primary flex items-center transition-colors duration-200 hover:bg-primary-700 active:bg-primary-800 shadow-md hover:shadow-lg transform active:scale-95"
                     onClick={handleSaveTable}
                   >
                     <FaSave className="mr-2" /> Guardar Cambios
                   </button>
                   <button 
-                    className="btn btn-secondary flex items-center"
+                    className="btn btn-secondary flex items-center transition-colors duration-200 hover:bg-gray-200 active:bg-gray-300 shadow-md hover:shadow-lg transform active:scale-95"
                     onClick={handleCancelEdit}
                   >
                     <FaUndo className="mr-2" /> Cancelar
@@ -307,7 +343,7 @@ const Settings = () => {
                     <tr key={table.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="p-2 rounded-md bg-gray-100 text-gray-600 mr-3">
+                          <div className="p-2 rounded-md bg-gray-100 text-gray-600 mr-3 transition-transform duration-100 hover:scale-105">
                             <FaChair />
                           </div>
                           <span className="font-medium">{table.number}</span>

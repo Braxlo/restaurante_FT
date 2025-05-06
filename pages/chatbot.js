@@ -132,8 +132,12 @@ const Chatbot = () => {
             </div>
             
             {/* Área de mensajes */}
-            <div className="flex-1 overflow-y-auto mb-4 pr-2" style={{ maxHeight: 'calc(100vh - 300px)' }}>
-              {messages.map(renderMessage)}
+            <div className="flex-1 overflow-y-auto mb-4 pr-2 scroll-smooth" style={{ maxHeight: 'calc(100vh - 300px)' }}>
+              {messages.map((message, index) => (
+                <div key={message.id} className={`animate-fade-in ${index === messages.length - 1 ? 'animate-slide-up' : ''}`}>
+                  {renderMessage(message)}
+                </div>
+              ))}
             </div>
             
             {/* Formulario de entrada */}
@@ -165,27 +169,38 @@ const Chatbot = () => {
             <div className="space-y-2">
               <button 
                 onClick={() => setInputMessage('¿Cuál es la predicción de demanda para mañana?')}
-                className="w-full text-left p-2 rounded-md hover:bg-gray-100 transition-colors text-sm"
+                className="w-full text-left p-2 rounded-md hover:bg-gray-100 transition-colors text-sm transform hover:scale-105 active:scale-95 transition-transform duration-200"
               >
-                ¿Cuál es la predicción de demanda para mañana?
+                <span className="inline-flex items-center">
+                  <FaLightbulb className="mr-2 text-yellow-500" />
+                  ¿Cuál es la predicción de demanda para mañana?
+                </span>
               </button>
               <button 
                 onClick={() => setInputMessage('Sugiere platos con los ingredientes disponibles')}
-                className="w-full text-left p-2 rounded-md hover:bg-gray-100 transition-colors text-sm"
+                className="w-full text-left p-2 rounded-md hover:bg-gray-100 transition-colors text-sm transform hover:scale-105 active:scale-95 transition-transform duration-200"
               >
-                Sugiere platos con los ingredientes disponibles
+                <span className="inline-flex items-center">
+                  <FaUtensils className="mr-2 text-green-500" />
+                  Sugiere platos con los ingredientes disponibles
+                </span>
               </button>
               <button 
                 onClick={() => setInputMessage('¿Qué productos están en stock crítico?')}
-                className="w-full text-left p-2 rounded-md hover:bg-gray-100 transition-colors text-sm"
+                className="w-full text-left p-2 rounded-md hover:bg-gray-100 transition-colors text-sm transform hover:scale-105 active:scale-95 transition-transform duration-200"
               >
-                ¿Qué productos están en stock crítico?
+                <span className="inline-flex items-center">
+                  <FaExclamationTriangle className="mr-2 text-red-500" />
+                  ¿Qué productos están en stock crítico?
+                </span>
               </button>
               <button 
                 onClick={() => setInputMessage('¿Cómo puedo optimizar el desperdicio de alimentos?')}
-                className="w-full text-left p-2 rounded-md hover:bg-gray-100 transition-colors text-sm"
+                className="w-full text-left p-2 rounded-md hover:bg-gray-100 transition-colors text-sm transform hover:scale-105 active:scale-95 transition-transform duration-200"
               >
-                ¿Cómo puedo optimizar el desperdicio de alimentos?
+                <span className="inline-flex items-center">
+                  ¿Cómo puedo optimizar el desperdicio de alimentos?
+                </span>
               </button>
             </div>
           </div>

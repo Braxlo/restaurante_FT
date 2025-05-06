@@ -2,13 +2,115 @@ import React, { useState } from 'react';
 import Layout from '../components/layout/Layout';
 import { FaCalendarAlt, FaChartLine, FaChartPie, FaChartBar, FaFilter, FaDownload, FaExchangeAlt, FaUtensils, FaWarehouse } from 'react-icons/fa';
 import { Bar, Line, Pie, Doughnut } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+// Estilos para el modal
+export const modalStyles = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    background: 'rgba(0,0,0,0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    animation: 'fadeIn 0.3s',
+  },
+  modal: {
+    background: '#fff',
+    borderRadius: '8px',
+    boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+    padding: '2rem',
+    minWidth: '500px',
+    maxWidth: '90vw',
+    maxHeight: '80vh',
+    overflowY: 'auto',
+    animation: 'slideDown 0.4s',
+    position: 'relative',
+  },
+  closeBtn: {
+    position: 'absolute',
+    top: '1rem',
+    right: '1rem',
+    background: 'transparent',
+    border: 'none',
+    fontSize: '1.5rem',
+    cursor: 'pointer',
+    color: '#888',
+    transition: 'color 0.2s',
+    '&:hover': {
+      color: '#555',
+    },
+  },
+  closeBtn: {
+    position: 'absolute',
+    top: '1rem',
+    right: '1rem',
+    background: 'transparent',
+    border: 'none',
+    fontSize: '1.5rem',
+    cursor: 'pointer',
+    color: '#888',
+    transition: 'color 0.2s',
+    '&:hover': {
+      color: '#555',
+    },
+  },
+};
+
+// Registrar los componentes de Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Economic = () => {
   // Estado para controlar el período de tiempo seleccionado
   const [timePeriod, setTimePeriod] = useState('week');
   
+  // Estado para controlar la visualización del modal de exportación
+  const [showExportModal, setShowExportModal] = useState(false);
+  
+  // Función para mostrar/ocultar el modal
+  const toggleExportModal = () => setShowExportModal(!showExportModal);
+  
   // Estado para controlar la categoría seleccionada
   const [selectedCategory, setSelectedCategory] = useState('all');
+  
+  // Estado para controlar la visibilidad del modal de filtros
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  
+  // Función para mostrar/ocultar el modal de filtros con animación
+  const toggleFilterModal = () => {
+    if (showFilterModal) {
+      // Animación de salida
+      const modal = document.querySelector('.filter-modal');
+      setTimeout(() => setShowFilterModal(false), 250);
+    } else {
+      setShowFilterModal(true);
+    }
+  };
   
   // Datos simulados para los gráficos
   const revenueData = {
@@ -113,19 +215,19 @@ const Economic = () => {
           <div className="flex items-center space-x-2">
             <div className="bg-white rounded-lg shadow-sm p-1">
               <button 
-                className={`px-3 py-1.5 rounded-md text-sm font-medium ${timePeriod === 'day' ? 'bg-primary-500 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${timePeriod === 'day' ? 'bg-primary-500 text-white shadow-md' : 'text-gray-600 hover:bg-gray-100 hover:shadow-sm active:scale-95'}`}
                 onClick={() => setTimePeriod('day')}
               >
                 Día
               </button>
               <button 
-                className={`px-3 py-1.5 rounded-md text-sm font-medium ${timePeriod === 'week' ? 'bg-primary-500 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${timePeriod === 'week' ? 'bg-primary-500 text-white shadow-md' : 'text-gray-600 hover:bg-gray-100 hover:shadow-sm active:scale-95'}`}
                 onClick={() => setTimePeriod('week')}
               >
                 Semana
               </button>
               <button 
-                className={`px-3 py-1.5 rounded-md text-sm font-medium ${timePeriod === 'month' ? 'bg-primary-500 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${timePeriod === 'month' ? 'bg-primary-500 text-white shadow-md' : 'text-gray-600 hover:bg-gray-100 hover:shadow-sm active:scale-95'}`}
                 onClick={() => setTimePeriod('month')}
               >
                 Mes
@@ -141,14 +243,144 @@ const Economic = () => {
           </div>
           
           <div className="flex items-center space-x-2">
-            <button className="flex items-center px-3 py-2 bg-white rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">
-              <FaFilter className="mr-2 text-gray-500" />
-              Filtrar
-            </button>
-            <button className="flex items-center px-3 py-2 bg-white rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">
-              <FaDownload className="mr-2 text-gray-500" />
+
+
+{showFilterModal && (
+  <div style={modalStyles.overlay}>
+    <div style={modalStyles.modal}>
+      <button 
+        style={modalStyles.closeBtn}
+        onClick={toggleFilterModal}
+      >
+        ×
+      </button>
+      <h2 className="text-xl font-bold mb-4">Filtros</h2>
+      
+      <div className="mb-4">
+        <h3 className="font-medium mb-2">Categorías:</h3>
+        <div className="grid grid-cols-2 gap-2">
+          {['Todos', 'Entradas', 'Platos principales', 'Postres', 'Bebidas', 'Especiales'].map((cat) => (
+            <label key={cat} className="flex items-center">
+              <input 
+                type="checkbox" 
+                className="mr-2" 
+                checked={selectedCategory === cat.toLowerCase().replace(' ', '_')}
+                onChange={() => setSelectedCategory(cat.toLowerCase().replace(' ', '_'))}
+              />
+              {cat}
+            </label>
+          ))}
+        </div>
+      </div>
+      
+      <div className="mb-4">
+        <h3 className="font-medium mb-2">Rango de fechas:</h3>
+        <div className="flex space-x-2">
+          <input 
+            type="date" 
+            className="border rounded-md p-2 w-full"
+            placeholder="Fecha inicio"
+          />
+          <span className="flex items-center">a</span>
+          <input 
+            type="date" 
+            className="border rounded-md p-2 w-full"
+            placeholder="Fecha fin"
+          />
+        </div>
+      </div>
+      
+      <div className="mb-4">
+        <h3 className="font-medium mb-2">Margen de ganancia:</h3>
+        <div className="flex items-center">
+          <input 
+            type="range" 
+            min="0" 
+            max="100" 
+            className="w-full mr-2"
+          />
+          <span>50%</span>
+        </div>
+      </div>
+      
+      <button 
+        className="w-full py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+        onClick={toggleFilterModal}
+      >
+        Aplicar Filtros
+      </button>
+    </div>
+  </div>
+)}
+
+<button 
+  className="flex items-center px-4 py-2.5 bg-white rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-200 hover:shadow-md active:scale-95 group border border-gray-200"
+  onClick={toggleFilterModal}
+>
+  <FaFilter className="mr-2 text-gray-500 group-hover:text-primary-600 transition-colors" />
+  Filtrar
+</button>
+            <button 
+              className="flex items-center px-4 py-2.5 bg-primary-600 text-white rounded-lg shadow-sm text-sm font-medium hover:bg-primary-700 transition-all duration-200 hover:shadow-md active:scale-95 group"
+              onClick={toggleExportModal}
+            >
+              <FaDownload className="mr-2 text-white" />
               Exportar
             </button>
+            {showExportModal && (
+                <div style={modalStyles.overlay} onClick={toggleExportModal}>
+                  <div style={modalStyles.modal} onClick={(e) => e.stopPropagation()}>
+                    <button 
+                      style={{
+                        ...modalStyles.closeBtn,
+                        color: '#ff4444',
+                        fontSize: '1.8rem',
+                        fontWeight: 'bold',
+                        '&:hover': {
+                          color: '#cc0000',
+                          transform: 'scale(1.1)'
+                        }
+                      }}
+                      onClick={toggleExportModal}
+                      aria-label="Cerrar modal"
+                    >
+                      ×
+                    </button>
+                    <h2 className="text-xl font-bold mb-4">Vista Previa de Exportación</h2>
+                    
+                    <div className="mb-4">
+                      <h3 className="font-medium mb-2">Datos a exportar:</h3>
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="mb-2">• Información económica completa</p>
+                        <p className="mb-2">• Gráficos y tablas visibles</p>
+                        <p>• Período seleccionado: {timePeriod}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="mb-4">
+                      <h3 className="font-medium mb-2">Formato de exportación:</h3>
+                      <div className="flex space-x-4">
+                        <button className="px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
+                          Excel (.xlsx)
+                        </button>
+                        <button className="px-4 py-2 bg-green-100 text-green-700 rounded-md hover:bg-green-200">
+                          PDF (.pdf)
+                        </button>
+                        <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
+                          CSV (.csv)
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <button 
+                      className="w-full py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+                      onClick={toggleExportModal}
+                    >
+                      Confirmar Exportación
+                    </button>
+                  </div>
+                </div>
+              )}
           </div>
         </div>
         

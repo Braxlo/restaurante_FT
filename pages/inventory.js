@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Layout from '../components/layout/Layout';
 import { FaSearch, FaPlus, FaEdit, FaTrash, FaExclamationTriangle, FaArrowDown, FaArrowUp, FaFilter } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Inventory = () => {
   // Estado para controlar la categoría seleccionada
@@ -8,6 +9,19 @@ const Inventory = () => {
   
   // Estado para controlar el producto seleccionado para editar
   const [selectedProduct, setSelectedProduct] = useState(null);
+  
+  // Estado para controlar la visibilidad del formulario de nuevo ingrediente
+  const [showNewIngredientForm, setShowNewIngredientForm] = useState(false);
+  
+  // Estado para el nuevo ingrediente
+  const [newIngredient, setNewIngredient] = useState({
+    name: '',
+    category: 'grains',
+    stock: 0,
+    unit: 'kg',
+    minStock: 0,
+    price: ''
+  });
 
   // Datos simulados de categorías
   const categories = [
@@ -21,6 +35,41 @@ const Inventory = () => {
     { id: 'oils', name: 'Aceites y Grasas' },
     { id: 'beverages', name: 'Bebidas' },
   ];
+
+  // Función para manejar cambios en el formulario de nuevo ingrediente
+  const handleIngredientChange = (e) => {
+    const { name, value } = e.target;
+    setNewIngredient({
+      ...newIngredient,
+      [name]: value
+    });
+  };
+
+  // Función para validar y enviar el nuevo ingrediente
+  const handleSubmitIngredient = (e) => {
+    e.preventDefault();
+    
+    // Validación básica
+    if (!newIngredient.name || !newIngredient.price) {
+      alert('Por favor complete todos los campos requeridos');
+      return;
+    }
+    
+    // Aquí iría la lógica para guardar el nuevo ingrediente
+    console.log('Nuevo ingrediente:', newIngredient);
+    
+    // Resetear el formulario
+    setNewIngredient({
+      name: '',
+      category: 'grains',
+      stock: 0,
+      unit: 'kg',
+      minStock: 0,
+      price: ''
+    });
+    
+    setShowNewIngredientForm(false);
+  };
 
   // Datos simulados de productos
   const products = [
@@ -209,6 +258,130 @@ const Inventory = () => {
 
   return (
     <Layout title="Inventario / Almacén">
+      {/* Formulario de nuevo ingrediente */}
+      <AnimatePresence>
+        {showNewIngredientForm && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setShowNewIngredientForm(false)}
+          >
+            <motion.div 
+              className="bg-white rounded-lg p-6 w-full max-w-md"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+            >
+              <h2 className="text-xl font-bold mb-4">Agregar Nuevo Ingrediente</h2>
+              <form onSubmit={handleSubmitIngredient}>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={newIngredient.name}
+                      onChange={handleIngredientChange}
+                      className="w-full p-2 border rounded-md"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
+                    <select
+                      name="category"
+                      value={newIngredient.category}
+                      onChange={handleIngredientChange}
+                      className="w-full p-2 border rounded-md"
+                    >
+                      {categories.map(cat => (
+                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                      <input
+                        type="number"
+                        name="stock"
+                        value={newIngredient.stock}
+                        onChange={handleIngredientChange}
+                        className="w-full p-2 border rounded-md"
+                        min="0"
+                        step="0.1"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Unidad</label>
+                      <select
+                        name="unit"
+                        value={newIngredient.unit}
+                        onChange={handleIngredientChange}
+                        className="w-full p-2 border rounded-md"
+                      >
+                        <option value="kg">kg</option>
+                        <option value="g">g</option>
+                        <option value="l">l</option>
+                        <option value="ml">ml</option>
+                        <option value="unidades">unidades</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Stock Mínimo</label>
+                      <input
+                        type="number"
+                        name="minStock"
+                        value={newIngredient.minStock}
+                        onChange={handleIngredientChange}
+                        className="w-full p-2 border rounded-md"
+                        min="0"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Precio (S/.)</label>
+                      <input
+                        type="text"
+                        name="price"
+                        value={newIngredient.price}
+                        onChange={handleIngredientChange}
+                        className="w-full p-2 border rounded-md"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-6 flex justify-end space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowNewIngredientForm(false)}
+                    className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600"
+                  >
+                    Guardar
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Panel superior con estadísticas y alertas */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="dashboard-card">
@@ -299,8 +472,12 @@ const Inventory = () => {
             />
             <FaSearch className="absolute left-3 top-3 text-gray-400" />
           </div>
-          <button className="btn btn-primary flex items-center">
-            <FaPlus className="mr-2" /> Nuevo Producto
+          <button 
+            className="btn btn-primary flex items-center transition-all duration-300 hover:bg-primary-600 active:scale-95"
+            onClick={() => setShowNewIngredientForm(true)}
+          >
+            <FaPlus className="mr-2 transition-transform group-hover:rotate-90" /> 
+            <span className="group-hover:underline">Nuevo Ingrediente</span>
           </button>
         </div>
       </div>
@@ -348,13 +525,25 @@ const Inventory = () => {
                   <td className="table-cell">
                     <div className="flex space-x-2">
                       <button 
-                        className="p-1 text-blue-500 hover:text-blue-700" 
-                        onClick={() => setSelectedProduct(product)}
+                        className="p-1 text-blue-500 hover:text-blue-700 transition-colors duration-200 transform hover:scale-110" 
+                        onClick={() => {
+                          setSelectedProduct(product);
+                          alert(`Editando producto: ${product.name}`);
+                        }}
+                        title="Editar producto"
                       >
-                        <FaEdit />
+                        <FaEdit className="hover:rotate-12 transition-transform" />
                       </button>
-                      <button className="p-1 text-red-500 hover:text-red-700">
-                        <FaTrash />
+                      <button 
+                        className="p-1 text-red-500 hover:text-red-700 transition-colors duration-200 transform hover:scale-110"
+                        onClick={() => {
+                          if(confirm(`¿Eliminar producto ${product.name}?`)) {
+                            alert(`Producto ${product.name} eliminado (simulado)`);
+                          }
+                        }}
+                        title="Eliminar producto"
+                      >
+                        <FaTrash className="hover:shake-animation" />
                       </button>
                     </div>
                   </td>

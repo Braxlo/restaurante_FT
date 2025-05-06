@@ -104,7 +104,7 @@ const Dashboard = () => {
     <Layout title="Dashboard - Resumen General">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <div className="dashboard-card flex items-center">
+        <div className="dashboard-card flex items-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary-500 border-transparent border-2 rounded-xl">
           <div className="rounded-full p-3 bg-blue-100 mr-4">
             <FaUtensils className="h-6 w-6 text-primary-500" />
           </div>
@@ -115,7 +115,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="dashboard-card flex items-center">
+        <div className="dashboard-card flex items-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary-500 border-transparent border-2 rounded-xl">
           <div className="rounded-full p-3 bg-red-100 mr-4">
             <FaTrash className="h-6 w-6 text-danger" />
           </div>
@@ -126,7 +126,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="dashboard-card flex items-center">
+        <div className="dashboard-card flex items-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary-500 border-transparent border-2 rounded-xl">
           <div className="rounded-full p-3 bg-yellow-100 mr-4">
             <FaExclamationTriangle className="h-6 w-6 text-warning" />
           </div>
@@ -137,7 +137,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="dashboard-card flex items-center">
+        <div className="dashboard-card flex items-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary-500 border-transparent border-2 rounded-xl">
           <div className="rounded-full p-3 bg-green-100 mr-4">
             <FaMoneyBillWave className="h-6 w-6 text-success" />
           </div>
@@ -155,8 +155,16 @@ const Dashboard = () => {
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold text-gray-800">Ventas Diarias</h2>
             <div className="flex space-x-2">
-              <button className="px-3 py-1 text-xs font-medium bg-gray-100 rounded-md hover:bg-gray-200">7 días</button>
-              <button className="px-3 py-1 text-xs font-medium bg-primary-500 text-white rounded-md">30 días</button>
+              <button 
+                className="px-3 py-1 text-xs font-medium bg-gray-100 rounded-md transition-all duration-200 hover:bg-gray-200 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"
+              >
+                7 días
+              </button>
+              <button 
+                className="px-3 py-1 text-xs font-medium bg-primary-500 text-white rounded-md transition-all duration-200 hover:bg-primary-600 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"
+              >
+                30 días
+              </button>
             </div>
           </div>
           <div className="h-80">
@@ -255,8 +263,11 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="mt-4 flex justify-center">
-            <button className="btn btn-primary flex items-center">
-              <FaChair className="mr-2" /> Ver Mapa de Mesas
+            <button 
+              className="btn btn-primary flex items-center transition-all duration-200 hover:bg-primary-600 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"
+            >
+              <FaChair className="mr-2 transition-transform duration-200 group-hover:rotate-6" /> 
+              <span className="group-hover:underline">Ver Mapa de Mesas</span>
             </button>
           </div>
         </div>
@@ -268,7 +279,7 @@ const Dashboard = () => {
             {alerts.map(alert => (
               <div 
                 key={alert.id} 
-                className={`p-3 rounded-lg flex items-start ${alert.severity === 'high' ? 'bg-red-50' : alert.severity === 'medium' ? 'bg-yellow-50' : 'bg-blue-50'}`}
+                className={`p-3 rounded-lg flex items-start transition-all duration-200 ${alert.severity === 'high' ? 'bg-red-50 hover:bg-red-100' : alert.severity === 'medium' ? 'bg-yellow-50 hover:bg-yellow-100' : 'bg-blue-50 hover:bg-blue-100'} hover:shadow-md hover:-translate-y-0.5 cursor-pointer`}
               >
                 <div className={`p-2 rounded-full mr-3 ${alert.severity === 'high' ? 'bg-red-100 text-red-500' : alert.severity === 'medium' ? 'bg-yellow-100 text-yellow-500' : 'bg-blue-100 text-blue-500'}`}>
                   {alert.type === 'stock' ? <FaWarehouse /> : 
@@ -287,8 +298,11 @@ const Dashboard = () => {
             ))}
           </div>
           <div className="mt-4 flex justify-center">
-            <button className="btn btn-secondary flex items-center">
-              <FaClipboardList className="mr-2" /> Ver Todas las Alertas
+            <button 
+              className="btn btn-secondary flex items-center transition-all duration-200 hover:bg-secondary-600 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"
+            >
+              <FaClipboardList className="mr-2 transition-transform duration-200 group-hover:rotate-6" /> 
+              <span className="group-hover:underline">Ver Todas las Alertas</span>
             </button>
           </div>
         </div>
